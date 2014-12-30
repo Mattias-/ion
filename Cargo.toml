@@ -1,0 +1,5 @@
+[package]
+
+name = "ion"
+version = "0.0.1"
+authors = ["Mattias Appelgren <mattias@ppelgren.se>"]
