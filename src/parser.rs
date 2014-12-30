@@ -81,8 +81,8 @@ impl Parser {
 
     fn vardef(&self, cap: Captures) -> Stm {
         let e = self.parse_expr(cap.at(1).unwrap());
-        let t = Type(cap.at(2).and_then(from_str).unwrap());
-        return Vardef(e, t);
+        let t = cap.at(2).and_then(from_str).unwrap();
+        return Vardef(e, Type(t));
     }
 
     fn assign(&self, cap: Captures) -> Stm {
@@ -109,11 +109,13 @@ impl Parser {
     }
 
     fn id(&self, cap: Captures) -> Expr {
-        return Id(cap.at(1).and_then(from_str).unwrap());
+        let s = cap.at(1).and_then(from_str).unwrap();
+        return Id(s);
     }
 
     fn litint(&self, cap: Captures) -> Expr {
-        return Litint(cap.at(1).and_then(from_str).unwrap());
+        let i = cap.at(1).and_then(from_str).unwrap();
+        return Litint(i);
     }
 
     fn plus(&self, cap: Captures) -> Expr {
