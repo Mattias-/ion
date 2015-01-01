@@ -2,7 +2,8 @@
 #[deriving(Show, Clone)]
 pub enum Expr {
     Id(String),
-    Litint(int),
+    LitInt(int),
+    Neg(Box<Expr>),
     Plus(Box<Expr>, Box<Expr>),
     Minus(Box<Expr>, Box<Expr>)
 }

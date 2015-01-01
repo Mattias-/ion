@@ -2,7 +2,7 @@
 use regex::{Regex, Captures};
 
 use abs::Expr;
-use abs::Expr::{Id, Litint, Plus, Minus};
+use abs::Expr::{Id, LitInt, Neg, Plus, Minus};
 use abs::Stm;
 use abs::Stm::{Vardef, Assign};
 use abs::Type;
@@ -25,9 +25,10 @@ fn syn_rules<'a>() -> Vec<SynRule> {
         ("Type", vec![typ]),
 
         ("Id", vec![id]),
-        ("Litint", vec![litint]),
+        ("LitInt", vec![litint]),
         ("Plus", vec![expr, r" \+ ", expr]),
         ("Minus", vec![expr, r" - ", expr]),
+        ("Neg", vec![r"-", expr]),
     ];
 
     let mut rules = vec![];
@@ -98,7 +99,8 @@ impl Parser {
                 let c = rule.regex.captures(s).expect("No captures");
                 return match rule.name.as_slice() {
                     "Id" => self.id(c),
-                    "Litint" => self.litint(c),
+                    "LitInt" => self.litint(c),
+                    "Neg" => self.neg(c),
                     "Plus" => self.plus(c),
                     "Minus" => self.minus(c),
                     _ => panic!("Bad match: {}", rule.name)
@@ -115,7 +117,12 @@ impl Parser {
 
     fn litint(&self, cap: Captures) -> Expr {
         let i = cap.at(1).and_then(from_str).unwrap();
-        return Litint(i);
+        return LitInt(i);
+    }
+
+    fn neg(&self, cap: Captures) -> Expr {
+        let e = self.parse_expr(cap.at(1).unwrap());
+        return Neg(box e);
     }
 
     fn plus(&self, cap: Captures) -> Expr {

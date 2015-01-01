@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 
 use abs::Expr;
-use abs::Expr::{Id, Litint, Plus, Minus};
+use abs::Expr::{Id, LitInt, Neg, Plus, Minus};
 use abs::Stm;
 use abs::Stm::{Vardef, Assign};
 
@@ -51,7 +51,8 @@ impl Eval {
     fn eval(&mut self, expr: Expr) -> int {
         match expr {
             Id(s) => self.env.lookup(s),
-            Litint(i) => i,
+            LitInt(i) => i,
+            Neg(box e) => - self.eval(e),
             Plus(box e1, box e2) => self.eval(e1) + self.eval(e2),
             Minus(box e1, box e2) => self.eval(e1) - self.eval(e2),
         }
