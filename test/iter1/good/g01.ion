@@ -1,0 +1,40 @@
+
+a :: Int
+a = 5
+
+aa :: Int
+aa = 222
+aa = 333
+
+aaa :: Int
+aaa :: Int
+
+b :: Int
+b = a + 3
+
+bb :: Int
+bb = a - 3
+
+c :: Int
+c = 3 + 2
+
+cc :: Int
+cc = 3 - 2
+
+d :: Int
+d = b + 3 - 2 - a
+
+e :: Int
+e = -a
+
+ee :: Int
+ee = -99
+
+f :: Int
+f = 1 + -12
+
+ff :: Int
+ff = --12
+
+g :: Int
+g = -5 + 5
