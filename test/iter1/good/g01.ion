@@ -2,24 +2,24 @@
 a :: Int
 a = 5
 
-aa :: Int
-aa = 222
-aa = 333
+a1 :: Int
+a1 = 222
+a1 = 333
 
-aaa :: Int
-aaa :: Int
+a2 :: Int
+a2 :: Int
 
 b :: Int
 b = a + 3
 
-bb :: Int
-bb = a - 3
+b1 :: Int
+b1 = a - 3
 
 c :: Int
 c = 3 + 2
 
-cc :: Int
-cc = 3 - 2
+c1 :: Int
+c1 = 3 - 2
 
 d :: Int
 d = b + 3 - 2 - a
@@ -27,14 +27,14 @@ d = b + 3 - 2 - a
 e :: Int
 e = -a
 
-ee :: Int
-ee = -99
+e1 :: Int
+e1 = -99
 
 f :: Int
 f = 1 + -12
 
-ff :: Int
-ff = --12
+f1 :: Int
+f1 = --12
 
 g :: Int
 g = -5 + 5
