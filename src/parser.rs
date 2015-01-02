@@ -7,59 +7,58 @@ use abs::Stm;
 use abs::Stm::{Vardef, Assign};
 use abs::Type;
 
-struct SynRule {
+#[deriving(Show)]
+pub struct Line<'a>(pub &'a str);
+
+struct ParseRule {
     name: String,
     regex: Regex,
 }
-
-fn syn_rules<'a>() -> Vec<SynRule> {
-    let id = r"([:lower:][:alnum:]*)";
-    let typ = r"([:upper:][:alnum:]*)";
-    let litint = r"([:digit:]+)";
-    let expr = r"(.*)";
-
-    let token_patterns = vec![
-        ("Vardef", vec![id, r" :: ", typ]),
-        ("Assign", vec![id, r" = ", expr]),
-
-        ("Type", vec![typ]),
-
-        ("Id", vec![id]),
-        ("LitInt", vec![litint]),
-        ("Plus", vec![expr, r" \+ ", expr]),
-        ("Minus", vec![expr, r" - ", expr]),
-        ("Neg", vec![r"-", expr]),
-    ];
-
-    let mut rules = vec![];
-    for tp in token_patterns.iter() {
-        let (name, ref pattern_partials) = *tp;
-        let mut sp = String::new();
-        sp.push_str("^");
-        for pp in pattern_partials.iter() {
-            sp.push_str(*pp);
-        }
-        sp.push_str("$");
-        let regex = Regex::new(sp.as_slice()).unwrap();
-        rules.push(SynRule {name: String::from_str(name), regex: regex});
-    }
-    return rules;
-}
-
 pub struct Parser {
-    rules: Vec<SynRule>
+    rules: Vec<ParseRule>
 }
 
 impl Parser {
 
     pub fn new() -> Parser {
-        Parser {rules: syn_rules()}
+        let id = r"([:lower:][:alnum:]*)";
+        let typ = r"([:upper:][:alnum:]*)";
+        let litint = r"([:digit:]+)";
+        let expr = r"(.*)";
+
+        let parse_patterns = vec![
+            ("Vardef", vec![id, r" :: ", typ]),
+            ("Assign", vec![id, r" = ", expr]),
+
+            ("Type", vec![typ]),
+
+            ("Id", vec![id]),
+            ("LitInt", vec![litint]),
+            ("Plus", vec![expr, r" \+ ", expr]),
+            ("Minus", vec![expr, r" - ", expr]),
+            ("Neg", vec![r"-", expr]),
+        ];
+
+        let mut rules = vec![];
+        for pp in parse_patterns.iter() {
+            let (name, ref pattern_parts) = *pp;
+            let mut regex_string = String::new();
+            regex_string.push_str("^");
+            for part in pattern_parts.iter() {
+                regex_string.push_str(*part);
+            }
+            regex_string.push_str("$");
+            let regex = Regex::new(regex_string.as_slice()).unwrap();
+            rules.push(ParseRule {name: String::from_str(name), regex: regex});
+        }
+        return Parser {rules: rules};
     }
 
-    pub fn parse(&self, s: Vec<&str>) -> Vec<Stm> {
+    pub fn parse(&self, s: Vec<Line>) -> Vec<Stm> {
         let mut res: Vec<Stm> = vec![];
         for line in s.iter() {
-            let l = self.parse_stm(*line);
+            let Line(s) = *line;
+            let l = self.parse_stm(s);
             res.push(l);
         }
         return res;

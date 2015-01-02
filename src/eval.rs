@@ -10,6 +10,11 @@ use abs::Stm::{Vardef, Assign};
 struct Env(HashMap<String, int>);
 
 impl Env {
+
+    fn new() -> Env {
+        return Env(HashMap::new());
+    }
+
     fn add(&mut self, id: String, value: int) {
         let ref mut m = self.0;
         m.insert(id, value);
@@ -26,8 +31,13 @@ pub struct Eval {
 }
 
 impl Eval {
+
     pub fn new() -> Eval {
-        Eval {env: Env(HashMap::new())}
+        Eval {env: Env::new()}
+    }
+
+    pub fn print_env(&self) {
+        println!("Environment:\n{}", self.env);
     }
 
     pub fn exec_stm(&mut self, stm: Stm) {
@@ -39,13 +49,6 @@ impl Eval {
             },
             _ => panic!("Unknown stm: {} in exec", stm)
         };
-    }
-
-    pub fn exec_stms(&mut self, stms: Vec<Stm>) {
-        for stm in stms.iter() {
-            self.exec_stm((*stm).clone());
-        }
-        println!("After eval:\n{}", self.env);
     }
 
     fn eval(&mut self, expr: Expr) -> int {

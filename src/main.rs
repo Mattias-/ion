@@ -3,7 +3,7 @@ extern crate regex;
 
 use std::io::File;
 
-use parser::Parser;
+use parser::{Line, Parser};
 use eval::Eval;
 
 mod abs;
@@ -25,17 +25,20 @@ fn main() {
     println!("Parsed:\n{}\n", stms);
 
     let mut e = Eval::new();
-    e.exec_stms(stms);
+    for stm in stms.iter() {
+        e.exec_stm((*stm).clone());
+    }
+    e.print_env();
 }
 
-fn preprocess<'a>(s: &'a String) -> Vec<&str>{
-    let mut res: Vec<&str> = vec![];
+fn preprocess<'a>(s: &'a String) -> Vec<Line>{
+    let mut res: Vec<Line> = vec![];
     for line in s.as_slice().lines() {
         match line {
             "" => {} // Discard empty lines
-            _ => res.push(line)
+            _ => res.push(Line(line))
         }
     }
-    return res
+    return res;
 }
 
