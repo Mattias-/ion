@@ -81,7 +81,7 @@ impl Parser {
 
     fn vardef(&self, cap: Captures) -> Stm {
         let e = self.parse_expr(cap.at(1).unwrap());
-        let t = cap.at(2).and_then(from_str).unwrap();
+        let t = cap.at(2).and_then(|s| s.parse()).unwrap();
         return Vardef(e, Type(t));
     }
 
