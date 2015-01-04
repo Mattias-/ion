@@ -65,8 +65,7 @@ impl Parser {
     }
 
     fn parse_stm(&self, s: &str) -> Stm {
-        for rt in self.rules.iter() {
-            let ref rule = *rt;
+        for rule in self.rules.iter() {
             if rule.regex.is_match(s) {
                 let c = rule.regex.captures(s).expect("No captures");
                 return match rule.name.as_slice() {
