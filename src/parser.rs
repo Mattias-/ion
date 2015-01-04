@@ -1,4 +1,5 @@
-
+use std::borrow::ToOwned;
+use std::ops::Deref;
 use regex::{Regex, Captures};
 
 use abs::Expr;
@@ -9,6 +10,12 @@ use abs::Type;
 
 #[deriving(Show)]
 pub struct Line<'a>(pub &'a str);
+impl<'a> Deref<str> for Line<'a> {
+    fn deref<'b>(&'b self) -> &'b str {
+        let Line(s) = *self;
+        s
+    }
+}
 
 struct ParseRule {
     name: String,
@@ -39,34 +46,26 @@ impl Parser {
             ("Neg", vec![r"-", expr]),
         ];
 
-        let mut rules = vec![];
-        for pp in parse_patterns.iter() {
-            let (name, ref pattern_parts) = *pp;
-            let mut regex_string = String::new();
-            regex_string.push_str("^");
-            for part in pattern_parts.iter() {
-                regex_string.push_str(*part);
-            }
-            regex_string.push_str("$");
-            let regex = Regex::new(regex_string.as_slice()).unwrap();
-            rules.push(ParseRule {name: String::from_str(name), regex: regex});
+        Parser {
+            rules: parse_patterns
+                .into_iter()
+                .map(|(name, pattern_parts)|
+                     (name, format!("^{}$", { let s: String = pattern_parts.concat(); s })))
+                .map(|(name, pattern)|
+                     ParseRule {
+                         name: name.to_owned(),
+                         regex: Regex::new(pattern.as_slice()).unwrap()
+                     }
+                ).collect(),
         }
-        return Parser {rules: rules};
     }
 
     pub fn parse(&self, s: Vec<Line>) -> Vec<Stm> {
-        let mut res: Vec<Stm> = vec![];
-        for line in s.iter() {
-            let Line(s) = *line;
-            let l = self.parse_stm(s);
-            res.push(l);
-        }
-        return res;
+        s.into_iter().map(|line| self.parse_stm(&*line)).collect()
     }
 
     fn parse_stm(&self, s: &str) -> Stm {
-        for rt in self.rules.iter() {
-            let ref rule = *rt;
+        for rule in self.rules.iter() {
             if rule.regex.is_match(s) {
                 let c = rule.regex.captures(s).expect("No captures");
                 return match rule.name.as_slice() {
@@ -81,7 +80,7 @@ impl Parser {
 
     fn vardef(&self, cap: Captures) -> Stm {
         let e = self.parse_expr(cap.at(1).unwrap());
-        let t = cap.at(2).and_then(from_str).unwrap();
+        let t = cap.at(2).and_then(|s| s.parse()).unwrap();
         return Vardef(e, Type(t));
     }
 

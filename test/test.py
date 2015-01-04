@@ -8,7 +8,7 @@ RED = '\033[91m'
 RESET = '\033[0m'
 
 def print_c(color, s):
-    print color + s + RESET
+    print(color + s + RESET)
 
 def main(args):
     neg_test = args[1].lower() == "--neg"
