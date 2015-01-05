@@ -33,7 +33,7 @@ fn main() {
 
 fn preprocess<'a>(s: &'a String) -> Vec<Line>{
     let mut res: Vec<Line> = vec![];
-    for line in s.as_slice().lines() {
+    for line in s.as_slice().lines_any() {
         match line {
             "" => {} // Discard empty lines
             _ => res.push(Line(line))
