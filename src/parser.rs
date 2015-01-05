@@ -6,8 +6,9 @@ use abs::Expr::{Id, LitInt, Neg, Plus, Minus};
 use abs::Stm;
 use abs::Stm::{Vardef, Assign};
 use abs::Type;
+use std::str::FromStr;
 
-#[deriving(Show)]
+#[derive(Show)]
 pub struct Line<'a>(pub &'a str);
 
 struct ParseRule {
@@ -81,7 +82,7 @@ impl Parser {
 
     fn vardef(&self, cap: Captures) -> Stm {
         let e = self.parse_expr(cap.at(1).unwrap());
-        let t = cap.at(2).and_then(from_str).unwrap();
+        let t = cap.at(2).and_then(FromStr::from_str).unwrap();
         return Vardef(e, Type(t));
     }
 
@@ -110,12 +111,12 @@ impl Parser {
     }
 
     fn id(&self, cap: Captures) -> Expr {
-        let s = cap.at(1).and_then(from_str).unwrap();
+        let s = cap.at(1).and_then(FromStr::from_str).unwrap();
         return Id(s);
     }
 
     fn litint(&self, cap: Captures) -> Expr {
-        let i = cap.at(1).and_then(from_str).unwrap();
+        let i = cap.at(1).and_then(FromStr::from_str).unwrap();
         return LitInt(i);
     }
 

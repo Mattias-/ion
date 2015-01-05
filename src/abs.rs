@@ -1,14 +1,14 @@
 
-#[deriving(Show, Clone)]
+#[derive(Show, Clone)]
 pub struct Type(pub String);
 
-#[deriving(Show, Clone)]
+#[derive(Show, Clone)]
 pub enum Stm {
     Vardef(Expr, Type),
     Assign(Expr, Expr),
 }
 
-#[deriving(Show, Clone)]
+#[derive(Show, Clone)]
 pub enum Expr {
     Id(String),
     LitInt(int),
