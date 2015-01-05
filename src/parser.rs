@@ -1,15 +1,15 @@
 
+use std::str::FromStr;
 use regex::{Regex, Captures};
 
-use abs::Expr;
-use abs::Expr::{Id, LitInt, Neg, Plus, Minus};
-use abs::Stm;
-use abs::Stm::{Vardef, Assign};
+use abs::Expr::{self, Id, LitInt, Neg, Plus, Minus};
+use abs::Stm::{self, Vardef, Assign};
 use abs::Type;
-use std::str::FromStr;
 
 #[derive(Show)]
-pub struct Line<'a>(pub &'a str);
+pub struct Line<'a> {
+    pub content: &'a str
+}
 
 struct ParseRule {
     name: String,
@@ -58,16 +58,14 @@ impl Parser {
     pub fn parse(&self, s: Vec<Line>) -> Vec<Stm> {
         let mut res: Vec<Stm> = vec![];
         for line in s.iter() {
-            let Line(s) = *line;
-            let l = self.parse_stm(s);
+            let l = self.parse_stm((*line).content);
             res.push(l);
         }
         return res;
     }
 
     fn parse_stm(&self, s: &str) -> Stm {
-        for rt in self.rules.iter() {
-            let ref rule = *rt;
+        for rule in self.rules.iter() {
             if rule.regex.is_match(s) {
                 let c = rule.regex.captures(s).expect("No captures");
                 return match rule.name.as_slice() {
@@ -93,8 +91,7 @@ impl Parser {
     }
 
     fn parse_expr(&self, s: &str) -> Expr {
-        for rt in self.rules.iter() {
-            let ref rule = *rt;
+        for rule in self.rules.iter() {
             if rule.regex.is_match(s) {
                 let c = rule.regex.captures(s).expect("No captures");
                 return match rule.name.as_slice() {

@@ -36,7 +36,7 @@ fn preprocess<'a>(s: &'a String) -> Vec<Line>{
     for line in s.as_slice().lines_any() {
         match line {
             "" => {} // Discard empty lines
-            _ => res.push(Line(line))
+            _ => res.push(Line{content: line})
         }
     }
     return res;
