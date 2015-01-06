@@ -1,4 +1,3 @@
-
 extern crate regex;
 
 use std::io::File;
@@ -18,7 +17,7 @@ fn main() {
     let path = Path::new(&args[1]);
     let s = File::open(&path).read_to_string().unwrap();
 
-    let lines = preprocess(&s);
+    let lines = preprocess(s.as_slice());
 
     let p = Parser::new();
     let stms = p.parse(lines);
@@ -31,14 +30,13 @@ fn main() {
     e.print_env();
 }
 
-fn preprocess<'a>(s: &'a String) -> Vec<Line>{
-    let mut res: Vec<Line> = vec![];
-    for line in s.as_slice().lines_any() {
-        match line {
-            "" => {} // Discard empty lines
-            _ => res.push(Line{content: line})
+fn preprocess(s: &str) -> Vec<Line>{
+    fn f(x: &str) -> Option<Line>{
+        if x == "" {
+            None
+        } else {
+            Some(Line{content: x})
         }
     }
-    return res;
+    s.lines_any().filter_map(f).collect()
 }
-
