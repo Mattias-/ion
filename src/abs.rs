@@ -1,18 +1,18 @@
 
 #[derive(Show, Clone)]
-pub struct Type(pub String);
+pub struct Type<'a>(pub &'a str);
 
 #[derive(Show, Clone)]
-pub enum Stm {
-    Vardef(Expr, Type),
-    Assign(Expr, Expr),
+pub enum Stm<'a> {
+    Vardef(Expr<'a>, Type<'a>),
+    Assign(Expr<'a>, Expr<'a>),
 }
 
 #[derive(Show, Clone)]
-pub enum Expr {
-    Id(String),
+pub enum Expr<'a> {
+    Id(&'a str),
     LitInt(int),
-    Neg(Box<Expr>),
-    Plus(Box<Expr>, Box<Expr>),
-    Minus(Box<Expr>, Box<Expr>)
+    Neg(Box<Expr<'a>>),
+    Plus(Box<Expr<'a>>, Box<Expr<'a>>),
+    Minus(Box<Expr<'a>>, Box<Expr<'a>>)
 }

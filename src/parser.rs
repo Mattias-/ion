@@ -55,7 +55,7 @@ impl Parser {
         return Parser {rules: rules};
     }
 
-    pub fn parse(&self, s: Vec<Line>) -> Vec<Stm> {
+    pub fn parse<'a>(&'a self, s: Vec<Line<'a>>) -> Vec<Stm> {
         let mut res: Vec<Stm> = vec![];
         for line in s.iter() {
             let l = self.parse_stm((*line).content);
@@ -64,7 +64,7 @@ impl Parser {
         return res;
     }
 
-    fn parse_stm(&self, s: &str) -> Stm {
+    fn parse_stm<'a>(&'a self, s: &'a str) -> Stm {
         for rule in self.rules.iter() {
             if rule.regex.is_match(s) {
                 let c = rule.regex.captures(s).expect("No captures");
@@ -78,19 +78,19 @@ impl Parser {
         panic!("No match: {}", s);
     }
 
-    fn vardef(&self, cap: Captures) -> Stm {
+    fn vardef<'a>(&'a self, cap: Captures<'a>) -> Stm {
         let e = self.parse_expr(cap.at(1).unwrap());
-        let t = cap.at(2).and_then(FromStr::from_str).unwrap();
+        let t : &'a str = cap.at(2).unwrap();
         return Vardef(e, Type(t));
     }
 
-    fn assign(&self, cap: Captures) -> Stm {
+    fn assign<'a>(&'a self, cap: Captures<'a>) -> Stm {
         let e1 = self.parse_expr(cap.at(1).unwrap());
         let e2 = self.parse_expr(cap.at(2).unwrap());
         return Assign(e1, e2);
     }
 
-    fn parse_expr(&self, s: &str) -> Expr {
+    fn parse_expr<'a >(&'a self, s: &'a str) -> Expr {
         for rule in self.rules.iter() {
             if rule.regex.is_match(s) {
                 let c = rule.regex.captures(s).expect("No captures");
@@ -107,8 +107,8 @@ impl Parser {
         panic!("No match: {}", s);
     }
 
-    fn id(&self, cap: Captures) -> Expr {
-        let s = cap.at(1).and_then(FromStr::from_str).unwrap();
+    fn id<'a>(&'a self, cap: Captures<'a>) -> Expr {
+        let s : &'a str = cap.at(1).unwrap();
         return Id(s);
     }
 
@@ -117,18 +117,18 @@ impl Parser {
         return LitInt(i);
     }
 
-    fn neg(&self, cap: Captures) -> Expr {
+    fn neg<'a>(&'a self, cap: Captures<'a>) -> Expr {
         let e = self.parse_expr(cap.at(1).unwrap());
         return Neg(box e);
     }
 
-    fn plus(&self, cap: Captures) -> Expr {
+    fn plus<'a>(&'a self, cap: Captures<'a>) -> Expr {
         let e1 = self.parse_expr(cap.at(1).unwrap());
         let e2 = self.parse_expr(cap.at(2).unwrap());
         return Plus(box e1, box e2);
     }
 
-    fn minus(&self, cap: Captures) -> Expr {
+    fn minus<'a>(&'a self, cap: Captures<'a>) -> Expr {
         let e1 = self.parse_expr(cap.at(1).unwrap());
         let e2 = self.parse_expr(cap.at(2).unwrap());
         return Minus(box e1, box e2);

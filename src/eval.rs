@@ -7,32 +7,32 @@ use abs::Stm;
 use abs::Stm::{Vardef, Assign};
 
 #[derive(Show)]
-struct Env(HashMap<String, int>);
+struct Env<'a>(HashMap<&'a str, int>);
 
-impl Env {
+impl<'a> Env<'a> {
 
-    fn new() -> Env {
+    fn new() -> Env<'a> {
         return Env(HashMap::new());
     }
 
-    fn add(&mut self, id: String, value: int) {
+    fn add(&mut self, id: &'a str, value: int) {
         let ref mut m = self.0;
         m.insert(id, value);
     }
 
-    fn lookup(&mut self, id:String) -> int {
+    fn lookup(&mut self, id: &'a str) -> int {
         let ref mut m = self.0;
         return *m.get(&id).expect("Undefined variable");
     }
 }
 
-pub struct Eval {
-    env: Env,
+pub struct Eval<'a> {
+    env: Env<'a>,
 }
 
-impl Eval {
+impl<'a> Eval<'a> {
 
-    pub fn new() -> Eval {
+    pub fn new() -> Eval<'a> {
         Eval {env: Env::new()}
     }
 
@@ -40,7 +40,7 @@ impl Eval {
         println!("Environment:\n{}", self.env);
     }
 
-    pub fn exec_stm(&mut self, stm: Stm) {
+    pub fn exec_stm(&mut self, stm: Stm<'a>) {
         match stm {
             Vardef(Id(_), _) => {},
             Assign(Id(s), e) => {
@@ -51,7 +51,7 @@ impl Eval {
         };
     }
 
-    fn eval(&mut self, expr: Expr) -> int {
+    fn eval(&mut self, expr: Expr<'a>) -> int {
         match expr {
             Id(s) => self.env.lookup(s),
             LitInt(i) => i,
