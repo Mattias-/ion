@@ -1,3 +1,4 @@
+#![feature(box_syntax)]
 extern crate regex;
 
 use std::io::File;
@@ -21,7 +22,7 @@ fn main() {
 
     let p = Parser::new();
     let stms = p.parse(lines);
-    println!("Parsed:\n{}\n", stms);
+    println!("Parsed:\n{:?}\n", stms);
 
     let mut e = Eval::new();
     for stm in stms.iter() {
