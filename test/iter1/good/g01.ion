@@ -7,7 +7,6 @@ a1 = 222
 a1 = 333
 
 a2 :: Int
-a2 :: Int
 
 b :: Int
 b = a + 3
