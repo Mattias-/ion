@@ -6,7 +6,7 @@ use abs::Expr::{Id, LitInt, Neg, Plus, Minus};
 use abs::Stm;
 use abs::Stm::{Vardef, Assign};
 
-#[derive(Show)]
+#[derive(Debug)]
 struct Env<'a>(HashMap<&'a str, i32>);
 
 impl<'a> Env<'a> {

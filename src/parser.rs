@@ -1,12 +1,11 @@
 
-use std::str::FromStr;
 use regex::{Regex, Captures};
 
 use abs::Expr::{self, Id, LitInt, Neg, Plus, Minus};
 use abs::Stm::{self, Vardef, Assign};
 use abs::Type;
 
-#[derive(Show)]
+#[derive(Debug)]
 pub struct Line<'a> {
     pub content: &'a str
 }
@@ -113,7 +112,7 @@ impl Parser {
     }
 
     fn litint(&self, cap: Captures) -> Expr {
-        let i = cap.at(1).and_then(FromStr::from_str).unwrap();
+        let i = cap.at(1).unwrap().parse().unwrap();
         return LitInt(i);
     }
 

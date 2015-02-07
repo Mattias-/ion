@@ -1,14 +1,14 @@
 
-#[derive(Show, Clone)]
+#[derive(Debug, Clone)]
 pub struct Type<'a>(pub &'a str);
 
-#[derive(Show, Clone)]
+#[derive(Debug, Clone)]
 pub enum Stm<'a> {
     Vardef(Expr<'a>, Type<'a>),
     Assign(Expr<'a>, Expr<'a>),
 }
 
-#[derive(Show, Clone)]
+#[derive(Debug, Clone)]
 pub enum Expr<'a> {
     Id(&'a str),
     LitInt(i32),

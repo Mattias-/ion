@@ -1,9 +1,14 @@
 #![feature(box_syntax)]
-#![allow(unstable)]
+#![feature(core)]
+#![feature(io)]
+#![feature(os)]
+#![feature(path)]
+#![feature(env)]
+#![feature(collections)]
 
 extern crate regex;
 
-use std::io::File;
+use std::old_io::File;
 
 use parser::{Line, Parser};
 use eval::Eval;
@@ -13,16 +18,14 @@ mod parser;
 mod eval;
 
 fn main() {
-    let args = std::os::args();
-    if args.len() < 2 {
-        panic!("Please provide a file");
-    }
-    let path = Path::new(&args[1]);
+    let mut args = std::env::args();
+    args.next();
+    let path = Path::new(args.next().unwrap().into_string().ok().unwrap());
     let s = File::open(&path).read_to_string().unwrap();
 
+    let p;
     let lines = preprocess(s.as_slice());
-
-    let p = Parser::new();
+    p = Parser::new();
     let stms = p.parse(lines);
     println!("Parsed:\n{:?}\n", stms);
 
