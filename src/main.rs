@@ -1,7 +1,7 @@
 #![feature(box_syntax)]
+#![feature(box_patterns)]
 #![feature(core)]
 #![feature(io)]
-#![feature(os)]
 #![feature(path)]
 #![feature(env)]
 #![feature(collections)]
@@ -20,7 +20,7 @@ mod eval;
 fn main() {
     let mut args = std::env::args();
     args.next();
-    let path = Path::new(args.next().unwrap().into_string().ok().unwrap());
+    let path = Path::new(args.next().unwrap());
     let s = File::open(&path).read_to_string().unwrap();
 
     let p;
