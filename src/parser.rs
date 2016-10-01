@@ -48,8 +48,8 @@ impl Parser {
                 regex_string.push_str(*part);
             }
             regex_string.push_str("$");
-            let regex = Regex::new(regex_string.as_slice()).unwrap();
-            rules.push(ParseRule {name: String::from_str(name), regex: regex});
+            let regex = Regex::new(&regex_string[..]).unwrap();
+            rules.push(ParseRule {name: String::from(name), regex: regex});
         }
         return Parser {rules: rules};
     }
@@ -67,7 +67,7 @@ impl Parser {
         for rule in self.rules.iter() {
             if rule.regex.is_match(s) {
                 let c = rule.regex.captures(s).expect("No captures");
-                return match rule.name.as_slice() {
+                return match &rule.name[..] {
                     "Vardef" => self.vardef(c),
                     "Assign" => self.assign(c),
                     _ => panic!("Bad match: {}", rule.name)
@@ -93,7 +93,7 @@ impl Parser {
         for rule in self.rules.iter() {
             if rule.regex.is_match(s) {
                 let c = rule.regex.captures(s).expect("No captures");
-                return match rule.name.as_slice() {
+                return match &rule.name[..] {
                     "Id" => self.id(c),
                     "LitInt" => self.litint(c),
                     "Neg" => self.neg(c),
@@ -118,19 +118,19 @@ impl Parser {
 
     fn neg<'a>(&'a self, cap: Captures<'a>) -> Expr {
         let e = self.parse_expr(cap.at(1).unwrap());
-        return Neg(box e);
+        return Neg(Box::new(e));
     }
 
     fn plus<'a>(&'a self, cap: Captures<'a>) -> Expr {
         let e1 = self.parse_expr(cap.at(1).unwrap());
         let e2 = self.parse_expr(cap.at(2).unwrap());
-        return Plus(box e1, box e2);
+        return Plus(Box::new(e1), Box::new(e2));
     }
 
     fn minus<'a>(&'a self, cap: Captures<'a>) -> Expr {
         let e1 = self.parse_expr(cap.at(1).unwrap());
         let e2 = self.parse_expr(cap.at(2).unwrap());
-        return Minus(box e1, box e2);
+        return Minus(Box::new(e1), Box::new(e2));
     }
 }
 

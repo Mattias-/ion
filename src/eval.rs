@@ -55,9 +55,9 @@ impl<'a> Eval<'a> {
         match expr {
             Id(s) => self.env.lookup(s),
             LitInt(i) => i,
-            Neg(box e) => - self.eval(e),
-            Plus(box e1, box e2) => self.eval(e1) + self.eval(e2),
-            Minus(box e1, box e2) => self.eval(e1) - self.eval(e2),
+            Neg(e) => - self.eval(*e),
+            Plus(e1, e2) => self.eval(*e1) + self.eval(*e2),
+            Minus(e1, e2) => self.eval(*e1) - self.eval(*e2),
         }
     }
 }
